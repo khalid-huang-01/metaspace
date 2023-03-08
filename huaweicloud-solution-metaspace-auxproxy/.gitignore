@@ -1,0 +1,5 @@
+.idea
+./vendor
+cmd/cmd.exe
+cmd/cmd
+.vscode

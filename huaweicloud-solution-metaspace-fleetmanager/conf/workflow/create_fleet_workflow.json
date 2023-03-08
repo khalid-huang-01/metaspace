@@ -1,0 +1,216 @@
+{
+  "name": "create_fleet",
+  "description": "create a process fleet",
+  "version": "1",
+  "tasks": [
+    {
+      "name": "start_fleet_creation",
+      "description": "启动应用进程队列创建流程",
+      "task_type": "START_FLEET_CREATION",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "prepare_res_domain",
+      "description": "按需同步res_domain资源",
+      "task_type": "PREPARE_RES_DOMAIN",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "sync_build_image",
+      "description": "按需同步Build镜像",
+      "task_type": "SYNC_BUILD_IMAGE",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "prepare_vpc",
+      "description": "按需准备VPC资源",
+      "task_type": "PREPARE_VPC",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "prepare_subnet",
+      "description": "按需准备Subnet资源",
+      "task_type": "PREPARE_SUBNET",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "prepare_security_group",
+      "description": "按需准备Security_Group资源",
+      "task_type": "PREPARE_SECURITY_GROUP",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "prepare_security_group_rules",
+      "description": "按需准备Security_Group_Rules资源",
+      "task_type": "PREPARE_SECURITY_GROUP_RULES",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "prepare_scaling_group",
+      "description": "准备弹性伸缩组",
+      "task_type": "PREPARE_SCALING_GROUP",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },{
+      "name": "wait_process_ready",
+      "description": "等待应用队列进程启动",
+      "task_type": "WAIT_PROCESS_READY",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 360,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "finish_fleet_creation",
+      "description": "更新应用进程队列状态",
+      "task_type": "FINISH_FLEET_CREATION",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "exponent",
+          "repeat": 10,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    }
+  ]
+}

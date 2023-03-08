@@ -1,0 +1,154 @@
+{
+  "name": "delete_fleet",
+  "description": "delete a process fleet",
+  "version": "1",
+  "tasks": [
+    {
+      "name": "start_fleet_deletion",
+      "description": "启动应用进程队列删除流程",
+      "task_type": "START_FLEET_DELETION",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 3,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "delete_scaling_group",
+      "description": "删除伸缩组资源",
+      "task_type": "DELETE_SCALING_GROUP",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 3,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "wait_scaling_group_deleted",
+      "description": "等待伸缩组删除完成",
+      "task_type": "WAIT_SCALING_GROUP_DELETED",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 120,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "delete_security_group",
+      "description": "删除安全组资源",
+      "task_type": "DELETE_SECURITY_GROUP",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 3,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "delete_subnet",
+      "description": "删除子网资源",
+      "task_type": "DELETE_SUBNET",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 3,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "delete_vpc",
+      "description": "删除VPC资源",
+      "task_type": "DELETE_VPC",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 3,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "finish_fleet_delete",
+      "description": "更新应用进程队列状态",
+      "task_type": "FINISH_FLEET_DELETE",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 5,
+          "delay_seconds": 10
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    }
+  ]
+}

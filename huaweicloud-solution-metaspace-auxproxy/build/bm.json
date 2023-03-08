@@ -1,0 +1,9 @@
+[
+  {
+    "name":"seccomponent",
+    "version":"1.1.5",
+    "file":"seccomponent-1.1.5-release.x86_64.rpm",
+    "output":"packages/",
+    "type":"binary"
+  }
+]

@@ -1,0 +1,8 @@
+// Copyright (c) Huawei Technologies Co., Ltd. 2022-2022. All rights reserved.
+
+// signal_windows
+package utils
+
+import "os"
+
+var shutdownSignals = []os.Signal{os.Interrupt}

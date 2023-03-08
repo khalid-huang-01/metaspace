@@ -1,0 +1,52 @@
+{
+  "service_endpoint": {
+    "iam_service": {
+      "cn-north-7": ""
+    },
+    "auto_scaling_service": {
+      "cn-north-7": ""
+    },
+    "app_gateway": {
+      "cn-north-7": ""
+    },
+    "vpc_service": {
+      "cn-north-7": ""
+    },
+    "obs_service": {
+      "cn-north-7": ""
+    },
+    "internal_iam_endpoint": ""
+  },
+  "fleet_cidr": {
+    "from": "",
+    "to": "",
+    "vpc_netmask": 19,
+    "subnet_netmask": 20
+  },
+  "resource": {
+    "specification": {
+      "cn-north-7": {
+        "scase_standard_4u8g": "Si2.large.2,c3.large.2",
+        "scase_standard_8u16g": "c6nl.large.2"
+      }
+    }
+  },
+  "internal_inbound_permissions": [
+    {
+      "protocol": "TCP",
+      "ip_range": "",
+      "from_port": 60001,
+      "to_port": 60001
+    }
+  ],
+  "eip_type": {
+    "cn-north-7": "5_g-vm",
+    "cn-north-5": "5_g-vm",
+    "cn-north-4": "5_bgp"
+  },
+  "log": {
+    "backup_count": 7,
+    "rolling_policy": "size",
+    "rotate_size": 50
+  }
+}

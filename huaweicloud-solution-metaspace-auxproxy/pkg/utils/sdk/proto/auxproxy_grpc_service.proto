@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+package auxproxyService;
+option go_package = "./;auxproxyservice";
+
+// 进程准备就绪后调用
+message ProcessReadyRequest {
+    repeated string logPathsToUpload = 1; // 进程日志的存放路径
+    int32 clientPort = 2; // 进程对外开放的接口，供非SCASE服务使用
+    int32 grpcPort = 3; // 进程对外开放的接口，供SCASE服务使用
+    int32 pid = 4; // 进程运行时的PID
+}
+
+// 进程在收到SCASE的启动服务器会话后需要调用
+message ActivateServerSessionRequest{
+    string serverSessionId = 1; // 服务器会话ID
+    int32 maxClients = 2; // 服务器会话可以承载的客户端会话数
+}
+
+// 进程在客户端会话接入后调用
+message AcceptClientSessionRequest {
+    string serverSessionId = 1; // 服务器会话ID
+    string clientSessionId = 2; // 客户端会话ID
+}
+
+// 进程在客户端会话离开后调用
+message RemoveClientSessionRequest {
+    string serverSessionId = 1; // 服务器会话ID
+    string clientSessionId = 2; // 客户端会话ID
+}
+
+// 客户端会话信息
+message ClientSession {
+   string clientSessionId = 1; // 客户端会话ID
+   string clientId = 2; // 客户ID
+   string serverSessionId = 3; // 服务器会话ID
+   string fleetId = 4; // 队列ID
+   string ipAddress = 5; // 客户端会话的IP地址
+   string status = 6; // 客户端会话状态，客户端会话的状态有RESERVED、TIMEOUT、ACTIVE和COMPLETED
+   string creationTime = 7; // 客户端会话的创建时间，UTC时间
+   string terminationTime = 8; // 客户端会话的终止时间，UTC时间
+   int32 port = 9; // 客户端会话对外暴露的接口，供非SCASE服务使用
+   string clientData = 10; // 客户数据
+//   string dnsName = 11; // DNS名
+}
+
+// 进程获取客户端会话信息的请求
+message DescribeClientSessionsRequest {
+   string serverSessionId = 1; // 服务器会话ID
+   string clientId = 2; // 客户ID
+   string clientSessionId = 3; // 客户端会话ID
+   string clientSessionStatusFilter = 4; // 客户端会话状态过滤器
+   string nextToken = 5; // 客户端会话列表的起始位置
+   int32 limit = 6 ; // 客户端会话列表分页的页大小
+}
+
+// 进程获取客户端会话信息的返回体
+message DescribeClientSessionsResponse {
+  string nextToken = 1; // 客户端会话列表的起始位置
+  repeated ClientSession clientSessions = 2; // 客户端会话信息
+  Error error = 3; // 查询客户端会话列表失败的错误码（选填）
+}
+
+// 进程更新客户端会话加入策略
+message UpdateClientSessionCreationPolicyRequest {
+   string serverSessionId = 1; // 服务器会话ID
+   string newClientSessionCreationPolicy = 2; // 客户端会话创建策略
+}
+
+// 进程在结束服务器会话后调用
+message TerminateServerSessionRequest {
+    string serverSessionId = 1; // 服务器会话ID
+}
+
+// 进程在退出时调用
+message ProcessEndingRequest {
+  int32 pid = 1; // 进程运行时的PID
+}
+
+// 返回结果，调用成功时，返回的error为空，返回体内容为空
+// 调用失败时，返回的error为非空，具体的错误码在返回体内部
+// AuxProxy的业务错误码从SCASE.00020000开始
+// SCASE代表表示服务名
+// “."连接服务名与八位数字
+// 八位数字表示具体的错误类型，其中前四位0002表示AuxProxy组件，后四位表示具体的错误
+// 后四位划分：前两位表示资源类型，00表示系统类型的错误，01表示app process，02表示server session，03表示client session
+// 综上所述
+// AuxProxy的app process的错误码占用范围为：SCASE.00020100到SCASE.00020199，共100位
+// AuxProxy的server session的错误码占用范围为：SCASE.00020200到SCASE.00020299，共100位
+// AuxProxy的client session的错误码占用范围为：SCASE.00020300到SCASE.00020399，共100位
+// app process错误码：
+// SCASE.00020100：上报进程就绪失败
+// SCASE.00020101：上报进程结束失败
+// server session错误码：
+// SCASE.00020200：上报服务器会话激活失败
+// SCASE.00020201：上报服务器会话结束失败
+// client session错误码：
+// SCASE.00020300：上报客户端会话接入失败
+// SCASE.00020301：上报客户端会话离开失败
+// SCASE.00020302：获取客户端会话信息失败
+// SCASE.00020303：更新客户端会话加入策略失败
+message Error {
+  string errorCode = 1; // 错误码
+  string errorMsg = 2; // 错误信息
+}
+
+// SCASE服务无返回内容的接口的返回体
+message AuxProxyResponse {
+  Error error = 1; // 错误码（选填）
+}
+
+service ScaseGrpcSdkService {
+    // 上报进程就绪
+    rpc ProcessReady (ProcessReadyRequest) returns (AuxProxyResponse) {}
+
+    // 上报服务器会话激活
+    rpc ActivateServerSession(ActivateServerSessionRequest) returns (AuxProxyResponse) {}
+
+    // 上报客户端会话接入
+    rpc AcceptClientSession(AcceptClientSessionRequest) returns (AuxProxyResponse) {}
+
+    // 上报客户端会话离开
+    rpc RemoveClientSession(RemoveClientSessionRequest) returns (AuxProxyResponse) {}
+
+    // 获取客户端会话信息
+    rpc DescribeClientSessions(DescribeClientSessionsRequest) returns (DescribeClientSessionsResponse) {}
+
+    // 更新客户端会话加入策略
+    rpc UpdateClientSessionCreationPolicy(UpdateClientSessionCreationPolicyRequest) returns (AuxProxyResponse) {}
+
+    // 上报服务器会话结束
+    rpc TerminateServerSession(TerminateServerSessionRequest) returns (AuxProxyResponse) {}
+
+    // 上报进程结束
+    rpc ProcessEnding(ProcessEndingRequest) returns (AuxProxyResponse) {}
+}

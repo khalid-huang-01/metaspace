@@ -1,0 +1,175 @@
+{
+  "name": "create_build_image",
+  "description": "create a image of build",
+  "version": "1",
+  "tasks": [
+    {
+      "name": "start_build_image",
+      "description": "启动镜像打包创建流程",
+      "task_type": "START_BUILD_IMAGE",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "prepare_res_domain",
+      "description": "按需同步res_domain资源",
+      "task_type": "PREPARE_RES_DOMAIN",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "prepare_eip",
+      "description": "准备EIP资源",
+      "task_type": "PREPARE_EIP",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "prepare_image_ecs",
+      "description": "按需准备镜像打包ECS资源",
+      "task_type": "PREPARE_IMAGE_ECS",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "create_build_image",
+      "description": "构建应用包镜像",
+      "task_type": "CREATE_BUILD_IMAGE",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 1,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "delete_image_ecs",
+      "description": "删除镜像打包ECS资源",
+      "task_type": "DELETE_IMAGE_ECS",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 5,
+          "delay_seconds": 10
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "delete_eip",
+      "description": "释放EIP资源",
+      "task_type": "DELETE_EIP",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "fixed",
+          "repeat": 5,
+          "delay_seconds": 10
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    },
+    {
+      "name": "build_finish",
+      "description": "更新镜像打包状态",
+      "task_type": "BUILD_FINISH",
+      "execute_failure": {
+        "retry_policy": {
+          "logic": "exponent",
+          "repeat": 20,
+          "delay_seconds": 5
+        },
+        "ignore": false
+      },
+      "rollback_failure": {
+        "retry_policy": {
+          "logic": "default",
+          "repeat": 0,
+          "delay_seconds": 0
+        },
+        "ignore": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package processService;
+option go_package = "./;processservice";
+
+// 定时检查进程的健康状态
+message HealthCheckRequest {
+
+}
+
+message HealthCheckResponse {
+    bool healthStatus = 1; // 健康状态，true表示健康，false表示不健康
+}
+
+// 服务器会话属性详情
+message SessionProperty {
+    // 属性名称（键）
+    string key = 1;
+    // 属性值（值）
+    string value = 2;
+}
+
+// 服务器会话
+message ServerSession {
+    string serverSessionId = 1; // 服务器会话ID
+    string fleetId = 2; // 队列ID
+    string name = 3; // 服务器会话名
+    int32 maxClients = 4; // 最大客户端会话数
+    bool joinable = 5; // 是否允许新的客户端会话加入
+    repeated SessionProperty sessionProperties = 6; // 会话属性列表
+    int32 port = 7; // 外部访问的端口，非SCASE服务使用
+    string ipAddress = 8; // 外部访问的IP地址，非SCASE服务使用
+    string sessionData = 9; // 会话数据
+//    string matchmakerData = 10;
+//    string dnsName = 11;
+}
+
+// 启动服务器会话
+message StartServerSessionRequest {
+    ServerSession serverSession = 1; // 服务器会话信息
+}
+
+// 结束游戏进程
+message ProcessTerminateRequest {
+    int64 terminationTime = 1; // 留给进程终止的时间，单位分钟
+}
+
+// 返回结果
+message ProcessResponse {
+
+}
+
+service ProcessGrpcSdkService {
+    // 接收健康检查请求
+    rpc OnHealthCheck (HealthCheckRequest) returns (HealthCheckResponse) {}
+
+    // 接收游戏会话
+    rpc OnStartServerSession(StartServerSessionRequest) returns (ProcessResponse) {}
+
+    // 结束游戏进程
+    rpc OnProcessTerminate(ProcessTerminateRequest) returns (ProcessResponse) {}
+}
